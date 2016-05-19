@@ -1,0 +1,20 @@
+#+STARTUP: indent
+#+AUTHOR: Andrea A Soliz
+
+#+TITLE: TODO List
+
+* TODO Make sure we're not already at a definition
+
+- private static boolean [inbounds](...
+  - [] <- highlighted
+
+* TODO Walk through line incase whole function isn't highlighted
+
+- inbound <- highlighted
+- inbounds( <- function
+
+* Future
+
+** TODO Support for other languages
+
+** TODO Expand search to other files
