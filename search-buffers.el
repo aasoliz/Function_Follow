@@ -7,7 +7,6 @@
                    extension)
           (setq list (cons element list))))))
 
-
 (defun ff/displaying-buffer (buffer position)
   "Checks if the buffer is already
    displayed. If so, switch to that
@@ -20,4 +19,10 @@
       (switch-to-buffer buffer)))
   (beginning-of-line))
 
-(ff/search-open-buffers 'java)
+(defun ff/displaying-buffer-with-window (position window)
+  "Given the window the buffer is in switch to it
+   Similar to 'ff/displaying-buffer' but no need to
+   recalculate window"
+  (select-window window)
+  (set-window-point window position)
+  (beginning-of-line))

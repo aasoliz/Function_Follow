@@ -11,9 +11,9 @@
     (if (or (char-equal ?\( (char-after mark-region)) 
             (char-equal ?\( (char-after (1- mark-region)))
             (char-equal ?\( (char-before point-mark)))
-        (let ((regex 
-                      (ff/get-major-mode-keywords
-                       (buffer-substring-no-properties point-mark mark-region))))
+        (let (position window (regex 
+                               (ff/get-major-mode-keywords
+                                (buffer-substring-no-properties point-mark mark-region))))
           (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
               (progn
                 (beginning-of-line)
@@ -24,10 +24,10 @@
                 (progn
                   (ff/displaying-buffer element position)
                   (return-from follow))
-              (if (not (eq (get-buffer-window element) nil))
+              (if (not (eq (setq window (get-buffer-window element)) nil))
                   (if (setq position (re-search-backward regex nil t))
                       (progn
-                        (ff/displaying-buffer element position)
+                        (ff/displaying-buffer-with-window position window)
                         (return-from follow))))))
           (message "Could not find the function"))
       (message "Did not detect method call"))))
