@@ -6,24 +6,34 @@
 (defun ff/function-follow (point-mark mark-region)
   "Find the definition of the selected/highlighted function"
   (interactive "r")
-  (if (or (char-equal ?\( (char-after mark-region)) 
-          (char-equal ?\( (char-after (1- mark-region)))
-          (char-equal ?\( (char-before point-mark)))
-      (let ((regex 
-             (ff/get-major-mode-keywords
-              (buffer-substring-no-properties point-mark mark-region))))
-        (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
-            (beginning-of-line)
-          (message "Could not find the function")))
-    (message "Did not detect method call"))
-  (deactivate-mark))
+  (deactivate-mark)
+  (block follow
+    (if (or (char-equal ?\( (char-after mark-region)) 
+            (char-equal ?\( (char-after (1- mark-region)))
+            (char-equal ?\( (char-before point-mark)))
+        (let ((list) (regex 
+                      (ff/get-major-mode-keywords
+                       (buffer-substring-no-properties point-mark mark-region))))
+          (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
+              (progn
+                (beginning-of-line)
+                (return-from follow)))
+          (dolist (element (ff/search-open-buffers (substring (symbol-name major-mode) 0 -5)) list)
+            (set-buffer element)
+            (if (re-search-forward regex nil t)
+                (progn
+                  (switch-to-buffer element)
+                  (beginning-of-line)
+                  (return-from follow))))
+          (message "Could not find the function"))
+      (message "Did not detect method call"))))
 
 (defun ff/assemble-regex (function mode &optional stop)
   "Assemble the regex to find the function definition"
   (let ((rx "\\(") (list))
     (dolist (element mode list)
       (setq rx 
-            (concat rx (mapconcat 'identity element " ") "\\|")))
+            (concat rx (mapconcat 'identity (cons element list) " ") "\\|")))
     (if (string= stop "perl")
         (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*{")
       (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*("))))

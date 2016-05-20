@@ -5,8 +5,6 @@
     (dolist (element (buffer-list) list)
       (if (string= (file-name-extension (buffer-name element))
                    extension)
-          (setq list (cons element list))))
-    (dolist (element list bf)
-      (set-buffer element)
+          (setq list (cons element list))))))
 
-(ff/search-open-buffers "java")
+(ff/search-open-buffers 'java)
