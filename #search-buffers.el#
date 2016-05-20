@@ -15,7 +15,7 @@
   (let ((bf-window (get-buffer-window buffer)))
     (if (not (eq bf-window nil))
         (progn
-          (select-window bf-window)
+          (select-window -window)
           (set-window-point bf-window position))
       (switch-to-buffer buffer)))
   (beginning-of-line))

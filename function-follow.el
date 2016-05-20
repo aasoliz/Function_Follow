@@ -11,20 +11,24 @@
     (if (or (char-equal ?\( (char-after mark-region)) 
             (char-equal ?\( (char-after (1- mark-region)))
             (char-equal ?\( (char-before point-mark)))
-        (let ((list) (regex 
+        (let ((regex 
                       (ff/get-major-mode-keywords
                        (buffer-substring-no-properties point-mark mark-region))))
           (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
               (progn
                 (beginning-of-line)
                 (return-from follow)))
-          (dolist (element (ff/search-open-buffers (substring (symbol-name major-mode) 0 -5)) list)
+          (dolist (element (ff/search-open-buffers (substring (symbol-name major-mode) 0 -5)) nil)
             (set-buffer element)
-            (if (re-search-forward regex nil t)
+            (if (setq position (re-search-forward regex nil t))
                 (progn
-                  (switch-to-buffer element)
-                  (beginning-of-line)
-                  (return-from follow))))
+                  (ff/displaying-buffer element position)
+                  (return-from follow))
+              (if (not (eq (get-buffer-window element) nil))
+                  (if (setq position (re-search-backward regex nil t))
+                      (progn
+                        (ff/displaying-buffer element position)
+                        (return-from follow))))))
           (message "Could not find the function"))
       (message "Did not detect method call"))))
 
