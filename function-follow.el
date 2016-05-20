@@ -13,7 +13,8 @@
              (ff/get-major-mode-keywords
               (buffer-substring-no-properties point-mark mark-region))))
         (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
-            (beginning-of-line)))
+            (beginning-of-line)
+          (message "Couldn't find the function")))
     (message "Did not detect method call"))
   (deactivate-mark))
 
@@ -29,7 +30,8 @@
 
 (defun ff/get-major-mode-keywords (function)
   "Get the keywords for the major mode
-   to assemble the regex"
+   to assemble the regex inorder to find
+   the function definition"
   (pcase major-mode
     (`java-mode        (ff/assemble-regex function ff/java-definition-keywords)) 
     (`emacs-lisp-mode  (ff/assemble-regex function ff/lisp-definition-keywords))  
