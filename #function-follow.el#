@@ -23,7 +23,7 @@
   (let ((rx "\\(") (list))
     (dolist (element mode list)
       (setq rx 
-            (concat rx (mapconcat 'identity element " ") "\\|")))
+            (concat rx (mapconcat 'identity (cons element list) " ") "\\|")))
     (if (string= stop "perl")
         (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*{")
       (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*("))))

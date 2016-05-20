@@ -1,0 +1,8 @@
+(defun ff/search-open-buffers ()
+  (let ((bf (buffer-list)) (list))
+    (dolist (element bf list)
+      (if (
+
+  (buffer-list))
+
+(ff/search-open-buffers)
