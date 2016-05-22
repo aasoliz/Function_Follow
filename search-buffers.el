@@ -7,7 +7,7 @@
                    extension)
           (setq list (cons element list))))))
 
-(defun ff/displaying-buffer (buffer position)
+(defun ff/display-buffer (buffer position)
   "Checks if the buffer is already
    displayed. If so, switch to that
    buffer"

@@ -3,28 +3,56 @@
 (defvar ff/python-definition-keywords   '("def"))
 (defvar ff/perl-definition-keywords     '("sub"))
 
+(defvar ff/depth nil)
+
 (defun ff/function-follow (point-mark mark-region)
-  "Find the definition of the selected/highlighted function"
+  "Find the definition of the selected/highlighted function.
+It first checks the current file, then any open buffers
+with the same file extension, and finally any files in
+the current directory with the same file extension.
+
+   To control the places that are searched in order to
+   find the function definition. Set the variable
+   ff/depth.
+
+     Default is nil, which only checks the current file
+     
+     t searches through any open buffers
+
+     'files' searches through files in the current directory.
+             This option can be slow"
   (interactive "r")
   (deactivate-mark)
   (block follow
     (if (or (char-equal ?\( (char-after mark-region)) 
             (char-equal ?\( (char-after (1- mark-region)))
             (char-equal ?\( (char-before point-mark)))
-        (let (position window (regex 
-                               (ff/get-major-mode-keywords
-                                (buffer-substring-no-properties point-mark mark-region))))
+        (let (position 
+              window
+              (extension (file-name-extension (buffer-name)))
+              (regex 
+               (ff/get-major-mode-keywords
+                (buffer-substring-no-properties point-mark mark-region))))
           (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
               (progn
                 (beginning-of-line)
                 (return-from follow)))
-          (dolist (element (ff/search-open-buffers (file-name-extension (buffer-name))) nil)
-            (set-buffer element)
-            (if (or (setq position (re-search-forward regex nil t))
-                    (setq position (re-search-backward regex nil t)))
-                (progn
-                  (ff/displaying-buffer element position)
-                  (return-from follow))))
+          (if ff/depth
+              (dolist (element (ff/search-open-buffers extension) nil)
+                (set-buffer element)
+                (if (or (setq position (re-search-forward regex nil t))
+                        (setq position (re-search-backward regex nil t)))
+                    (progn
+                      (ff/display-buffer element position)
+                      (return-from follow)))))
+          (if (string= ff/depth "files")
+              (dolist (element (ff/search-files extension) nil)
+                (set-buffer (find-file element))
+                (if (setq position (re-search-forward regex nil t))
+                    (progn
+                      (ff/display-buffer element position)
+                      (return-from follow))
+                  (kill-buffer element))))
           (message "Could not find the function"))
       (message "Did not detect method call"))))
 
