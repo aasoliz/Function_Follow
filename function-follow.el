@@ -20,27 +20,25 @@
                 (return-from follow)))
           (dolist (element (ff/search-open-buffers (file-name-extension (buffer-name))) nil)
             (set-buffer element)
-            (if (setq position (re-search-forward regex nil t))
+            (if (or (setq position (re-search-forward regex nil t))
+                    (setq position (re-search-backward regex nil t)))
                 (progn
                   (ff/displaying-buffer element position)
-                  (return-from follow))
-              (if (not (eq (setq window (get-buffer-window element)) nil))
-                  (if (setq position (re-search-backward regex nil t))
-                      (progn
-                        (ff/displaying-buffer-with-window position window)
-                        (return-from follow))))))
+                  (return-from follow))))
           (message "Could not find the function"))
       (message "Did not detect method call"))))
 
 (defun ff/assemble-regex (function mode &optional stop)
-  "Assemble the regex to find the function definition"
+  "Assemble the regex to find the function definition.
+   stop is used to identify which languages have different 
+   conventions in function definitions"
   (let ((rx "\\(") (list))
     (dolist (element mode list)
       (setq rx 
             (concat rx (mapconcat 'identity (cons element list) " ") "\\|")))
     (if (string= stop "perl")
         (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*{")
-      (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*("))))
+      (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) " ?("))))
 
 (defun ff/get-major-mode-keywords (function)
   "Get the keywords for the major mode

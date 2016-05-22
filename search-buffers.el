@@ -16,13 +16,6 @@
         (progn
           (select-window bf-window)
           (set-window-point bf-window position))
+      (select-window (get-lru-window))
       (switch-to-buffer buffer)))
-  (beginning-of-line))
-
-(defun ff/displaying-buffer-with-window (position window)
-  "Given the window the buffer is in switch to it
-   Similar to 'ff/displaying-buffer' but no need to
-   recalculate window"
-  (select-window window)
-  (set-window-point window position)
   (beginning-of-line))
