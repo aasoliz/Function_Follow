@@ -18,7 +18,7 @@
               (progn
                 (beginning-of-line)
                 (return-from follow)))
-          (dolist (element (ff/search-open-buffers (substring (symbol-name major-mode) 0 -5)) nil)
+          (dolist (element (ff/search-open-buffers (file-name-extension (buffer-name))) nil)
             (set-buffer element)
             (if (setq position (re-search-forward regex nil t))
                 (progn
