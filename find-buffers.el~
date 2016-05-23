@@ -19,3 +19,5 @@
       (select-window (get-lru-window))
       (switch-to-buffer buffer)))
   (beginning-of-line))
+
+(provide 'search-buffers)

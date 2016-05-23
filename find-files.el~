@@ -1,7 +1,13 @@
-(defun ff/search-files (extension)
-  "Search through other files in the directory
-   looking for a match. Only check files with
-   the same extension."
+;;; find-files.el --- Get a list of files in the current directory
+
+;;; Commentary:
+
+;;  Makes sure the file is not already linked to a buffer.
+
+;;; Code:
+
+(defun ff/find-files (extension)
+"Use EXTENSION to find other files that could have a function definition."
   (let (list index)
     (dolist (element (directory-files "." nil nil t) list)
       (if (and (not (eq (setq index (search "." element)) nil))
@@ -11,7 +17,9 @@
           (setq list (cons element list))))))
 
 (defun ff/buffer-exists (file)
-  "Returns nil if buffer does 
-   not exist"
+"Return nil if buffer for FILE does not exist."
   (if (get-buffer file)
       t))
+
+(provide 'find-files)
+;;; find-files.el ends here
