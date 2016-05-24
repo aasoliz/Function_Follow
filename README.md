@@ -5,7 +5,7 @@ call within the current file or any open buffers.
 
 To install
    
-   - Load the files "function-follow.el" and "search-buffers.el"
+   - add (require 'ff/function-follow) to your Emacs init file
    - Create a keybinding or call the function, through
      - M-x ff/function-follow
 

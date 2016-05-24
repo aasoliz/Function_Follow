@@ -60,8 +60,7 @@
 (defconst ff/perl-definition-keywords     '("sub"))
 
 (defcustom ff/depth nil
-  "Specifies where to search."
-  :options nil, t, 'files)
+  "Specifies where to search.")
 
 (defun ff/function-follow (point-mark mark-region)
 "Use POINT-MARK and MARK-REGION to find the highlighted function's definition.

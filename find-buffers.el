@@ -3,7 +3,6 @@
 ;; Copyright (C) 2016  Andrea A Soliz
 
 ;; Author: Andrea A Soliz <and.sol17@gmail.com>
-;; Keywords: function method
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
