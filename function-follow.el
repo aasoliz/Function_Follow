@@ -69,7 +69,7 @@ extension, and finally any files in the current directory with the
 same file extension."
   (interactive "r")
   (deactivate-mark)
-  (block follow
+  (cl-block follow
     (if (or (char-equal ?\( (char-after mark-region))
             (char-equal ?\( (char-after (1- mark-region)))
             (char-equal ?\( (char-before point-mark)))
@@ -83,7 +83,7 @@ same file extension."
           (if (or (re-search-backward regex nil t) (re-search-forward regex nil t))
               (progn
                 (beginning-of-line)
-                (return-from follow)))
+                (cl-return-from follow)))
           ;; Search open buffers
           (if ff/depth
               (dolist (element (ff/find-open-buffers extension) nil)
@@ -93,7 +93,7 @@ same file extension."
                         (setq position (re-search-backward regex nil t)))
                     (progn
                       (ff/display-buffer element position)
-                      (return-from follow)))))
+                      (cl-return-from follow)))))
           ;; Start searching files
           (if (string= ff/depth "files")
               (dolist (element (ff/find-files extension) nil)
@@ -102,7 +102,7 @@ same file extension."
                 (if (setq position (re-search-forward regex nil t))
                     (progn
                       (ff/display-buffer element position)
-                      (return-from follow))
+                      (cl-return-from follow))
                   (kill-buffer element))))
           (message "Could not find the function"))
       (message "Did not detect method call"))))
