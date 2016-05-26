@@ -1,4 +1,0 @@
-(defun ff/function-follow ()
-  "Find the definition of the selected function"
-  (interactive)
-  (point))
