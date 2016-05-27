@@ -54,17 +54,19 @@
 (require 'find-files)
 
 ;; Keywords specific to functions in each supported language
-(defconst ff/java-definition-keywords     '("public" "private"))
-(defconst ff/lisp-definition-keywords     '("defun"))
-(defconst ff/python-definition-keywords   '("def"))
-(defconst ff/perl-definition-keywords     '("sub"))
+(defconst ff/definition-keywords '((java-mode ("public" "private"))
+                                   (lisp-mode ("defun"))
+                                   (emacs-lisp-mode ("defun"))
+                                   (python-mode ("def"))
+                                   (ruby-mode ("def"))
+                                   (perl-mode ("sub"))))
 
 (defcustom ff/depth nil
   "Specifies where to search."
   :group 'Files)
 
 (defun ff/function-follow (point-mark mark-region)
-"Use POINT-MARK and MARK-REGION to find the highlighted function's definition.
+  "Use POINT-MARK and MARK-REGION to find the highlighted function's definition.
 First check the current file, then any open buffers with the same file
 extension, and finally any files in the current directory with the
 same file extension."
@@ -109,7 +111,7 @@ same file extension."
       (message "Did not detect method call"))))
 
 (defun ff/assemble-regex (function mode &optional stop)
-"Assemble the regex to find the FUNCTION using the keywords from MODE.
+  "Assemble the regex to find the FUNCTION using the keywords from MODE.
 STOP is used to identify which languages have different
 conventions in function definitions."
   (let ((rx "\\(") (list))
@@ -121,15 +123,14 @@ conventions in function definitions."
       (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) " ?("))))
 
 (defun ff/get-major-mode-keywords (function)
-"Pass along FUNCTION and the major mode keywords.
+  "Pass along FUNCTION and the major mode keywords.
 Assemble the regex inorder to find the function defintion."
-  (pcase major-mode
-    (`java-mode        (ff/assemble-regex function ff/java-definition-keywords))
-    (`emacs-lisp-mode  (ff/assemble-regex function ff/lisp-definition-keywords))
-    (`python-mode      (ff/assemble-regex function ff/python-definition-keywords))
-    (`perl-mode        (ff/assemble-regex function ff/perl-definition-keywords "perl"))
-    (`ruby-mode        (ff/assemble-regex function ff/python-definition-keywords))
-    (_                 (message "Not a supported major mode"))))
+  (let ((keywords (assoc major-mode ff/definition-keywords)))
+    (unless keywords
+      (error "Not a supported major mode"))
+    (pcase major-mode
+      (`perl-mode        (ff/assemble-regex function keywords "perl"))
+      (_                 (ff/assemble-regex function keywords)))))
 
 (provide 'function-follow)
 

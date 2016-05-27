@@ -27,7 +27,7 @@
 "Find open buffers with the same EXTENSION as the original file."
   (let (list bf)
     (dolist (element (buffer-list) list)
-      (if (string= (file-name-extension (buffer-name element))
+      (if (string= (file-name-extension (buffer-file-name element))
                    extension)
           (setq list (cons element list))))))
 
