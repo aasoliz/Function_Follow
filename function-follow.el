@@ -96,7 +96,7 @@ same file extension."
                         (setq position (re-search-backward regex nil t)))
                     (progn
                       (ff/display-buffer element position)
-                      (cl-return-from follow))))
+                      (cl-return-from follow)))))
           ;; Start searching files
           (if (string= ff/depth "files")
               (dolist (element (ff/find-files extension) nil)
