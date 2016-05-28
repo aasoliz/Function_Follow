@@ -27,9 +27,11 @@
 "Find open buffers with the same EXTENSION as the original file."
   (let (list bf)
     (dolist (element (buffer-list) list)
-      (if (string= (file-name-extension (buffer-file-name element))
-                   extension)
-          (setq list (cons element list))))))
+      (let ((file (buffer-file-name element)))
+        (if (not (eq file nil))
+            (if (string= (file-name-extension file)
+                         extension)
+                (setq list (cons element list))))))))
 
 (defun ff/display-buffer (buffer position)
 "Switch to BUFFER and set the mark to the POSITION of the function definition."

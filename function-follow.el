@@ -46,7 +46,7 @@
 
 ;; Supported Languages:
 
-;; Java, ELisp, Python, Perl, Ruby
+;; Java, ELisp, Lisp, Python, Perl, Ruby
 
 ;;; Code:
 
@@ -96,7 +96,7 @@ same file extension."
                         (setq position (re-search-backward regex nil t)))
                     (progn
                       (ff/display-buffer element position)
-                      (cl-return-from follow)))))
+                      (cl-return-from follow))))
           ;; Start searching files
           (if (string= ff/depth "files")
               (dolist (element (ff/find-files extension) nil)
@@ -114,10 +114,10 @@ same file extension."
   "Assemble the regex to find the FUNCTION using the keywords from MODE.
 STOP is used to identify which languages have different
 conventions in function definitions."
-  (let ((rx "\\(") (list))
+  (let ((rx "\\(") list)
     (dolist (element mode list)
       (setq rx
-            (concat rx (mapconcat 'identity (cons element list) " ") "\\|")))
+            (concat rx element "\\|")))
     (if (string= stop "perl")
         (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) ".*{")
       (concat (substring rx 0 -2) "\\).* " (replace-regexp-in-string " " "" function) " ?("))))
@@ -129,8 +129,8 @@ Assemble the regex inorder to find the function defintion."
     (unless keywords
       (error "Not a supported major mode"))
     (pcase major-mode
-      (`perl-mode        (ff/assemble-regex function keywords "perl"))
-      (_                 (ff/assemble-regex function keywords)))))
+      (`perl-mode        (ff/assemble-regex function (elt keywords 1) "perl"))
+      (_                 (ff/assemble-regex function (elt keywords 1))))))
 
 (provide 'function-follow)
 
