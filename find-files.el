@@ -27,7 +27,7 @@
 "Use EXTENSION to find other files that could have a function definition."
   (let (list index)
     (dolist (element (directory-files "." nil nil t) list)
-      (if (and (not (eq (setq index (search "." element)) nil))
+      (if (and (not (eq (setq index (cl-search "." element)) nil))
                (string= (substring element (1+ index)) extension)
                (not (ff/buffer-exists element))
                (file-readable-p element))
